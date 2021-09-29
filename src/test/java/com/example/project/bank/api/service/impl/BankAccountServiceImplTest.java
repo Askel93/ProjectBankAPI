@@ -2,53 +2,102 @@ package com.example.project.bank.api.service.impl;
 
 import com.example.project.bank.api.dao.BankAccountDAO;
 import com.example.project.bank.api.entity.BankAccount;
+import com.example.project.bank.api.entity.BankCard;
 import com.example.project.bank.api.exception.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class BankAccountServiceImplTest {
 
     @Autowired
     BankAccountServiceImpl bankAccountService;
-    @MockBean
+    @SpyBean
     private BankAccountDAO bankAccountDAO;
 
+    private final int bankAccountId = 1;
+
     @Test
-    void addMoney() {
+    void addMoneySuccess() {
 
-//        when(bankAccountService.addMoney(1,10)).thenReturn(new BankAccount(1,"11111222223333344444","EUR", 1000));
-//        when(bankAccountService.addMoney(99999,10)).thenThrow(new EntityNotFoundException("test",4));
-        when(bankAccountDAO.findById(1)).thenReturn(new BankAccount(1,"11111222223333344444","EUR", 1000));
-        when(bankAccountDAO.findById(-1)).thenThrow(new EntityNotFoundException("test",-1));
+        double balanceBefore = bankAccountService.findById(bankAccountId).getBalance();
+        double sum = 11.11;
 
-        when(bankAccountDAO.findById(1)).thenReturn(new BankAccount(1,"11111222223333344444","EUR", 1000));
+        double balanceAfter = bankAccountService.addMoney(bankAccountId, sum).getBalance();
 
-//        assertThrows(EntityNotFoundException.class, () -> bankAccountService.addMoney(1,10));
-//        verify(bankAccountDAO, Mockito.times(1)).findById(1);
-
-//        when(bankAccountService.addMoney(value,10))
-//                .thenThrow(EntityNotFoundException.class)
-//                .thenReturn(new BankAccount());
+        assertEquals((int)(balanceAfter * 100) - (int)(balanceBefore * 100), sum * 100);
+        then(bankAccountDAO).should(times(2)).findById(bankAccountId);
+        then(bankAccountDAO).should(times(1)).save(any());
 
     }
 
     @Test
-    void findById() {
-        assertThrows(EntityNotFoundException.class, () -> bankAccountService.findById(1));
-        verify(bankAccountDAO, Mockito.times(1)).findById(1);
+    void addMoneyEntityNotFoundException() {
+
+        given(bankAccountDAO.findById(bankAccountId)).willReturn(null);
+
+        double sum = 11.11;
+
+        assertThrows(EntityNotFoundException.class, () -> bankAccountService.addMoney(bankAccountId, sum));
+
+        then(bankAccountDAO).should(times(1)).findById(bankAccountId);
+        then(bankAccountDAO).should(never()).save(any());
+
     }
 
     @Test
-    void findBankCardsByBankAccountId() {
-        assertThrows(EntityNotFoundException.class, () -> bankAccountService.findBankCardsByBankAccountId(1));
-        verify(bankAccountDAO, Mockito.times(1)).findById(1);
+    void findByIdSuccess() {
+
+        BankAccount bankAccountTest = new BankAccount(bankAccountId,"11111222223333344444","EUR", 1000);
+
+        given(bankAccountDAO.findById(bankAccountId)).willReturn(bankAccountTest);
+
+        BankAccount bankAccount = bankAccountService.findById(bankAccountId);
+
+        assertNotNull(bankAccount);
+        assertEquals(bankAccount,bankAccountTest);
+
+        then(bankAccountDAO).should(times(1)).findById(bankAccountId);
+
     }
+
+    @Test
+    void findByIdEntityNotFoundException() {
+
+        given(bankAccountDAO.findById(bankAccountId)).willReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> bankAccountService.findBankCardsByBankAccountId(bankAccountId));
+
+        then(bankAccountDAO).should(times(1)).findById(bankAccountId);
+    }
+
+    void findBankCardsByBankAccountIdSuccess(){
+
+        List<BankCard> bankCardList = bankAccountService.findBankCardsByBankAccountId(bankAccountId);
+
+        assertNotNull(bankCardList);
+        assertTrue(bankCardList.size() > 0);
+
+    }
+
+    void findBankCardsByBankAccountIdEntityNotFound(){
+
+        given(bankAccountDAO.findById(bankAccountId)).willReturn(null);
+
+        assertThrows(EntityNotFoundException.class, () -> bankAccountService.findBankCardsByBankAccountId(bankAccountId));
+
+        then(bankAccountDAO).should(times(1)).findById(bankAccountId);
+
+    }
+
+
 }
