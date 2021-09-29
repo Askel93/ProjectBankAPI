@@ -5,10 +5,7 @@ import com.example.project.bank.api.dto.BankAccountIdDTO;
 import com.example.project.bank.api.dto.BankCardForAddDTO;
 import com.example.project.bank.api.dto.BankCardTypeIdDTO;
 import com.example.project.bank.api.dto.PaymentSystemIdDTO;
-import com.example.project.bank.api.entity.BankAccount;
 import com.example.project.bank.api.entity.BankCard;
-import com.example.project.bank.api.entity.BankCardType;
-import com.example.project.bank.api.entity.PaymentSystem;
 import com.example.project.bank.api.exception.BankCardGenerateException;
 import com.example.project.bank.api.exception.EntityNotFoundException;
 import com.example.project.bank.api.service.BankAccountService;
@@ -18,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
