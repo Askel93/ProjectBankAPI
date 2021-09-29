@@ -1,8 +1,6 @@
 package com.example.project.bank.api.service.impl;
 
-import com.example.project.bank.api.dao.BankAccountDAO;
 import com.example.project.bank.api.dao.PaymentSystemDAO;
-import com.example.project.bank.api.entity.BankAccount;
 import com.example.project.bank.api.exception.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
