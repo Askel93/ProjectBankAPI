@@ -26,7 +26,7 @@ public class BankCardServiceImpl implements BankCardService {
     private BankCardDAO bankCardDAO;
 
     private final BankAccountService bankAccountService;
-    private final PaymentSystemService paymentSystemService;
+    private PaymentSystemService paymentSystemService;
     private final BankCardTypeService bankCardTypeService;
 
     @Autowired
