@@ -10,10 +10,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
-public class TestProjectBankApiApplication {
+public class ProjectBankApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TestProjectBankApiApplication.class, args);
+        SpringApplication.run(ProjectBankApiApplication.class, args);
     }
 
     @Bean
