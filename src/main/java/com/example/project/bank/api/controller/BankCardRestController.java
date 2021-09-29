@@ -22,30 +22,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/bank-cards")
 public class BankCardRestController {
 
-    private final BankAccountService bankAccountService;
     private final BankCardService bankCardService;
-    private final PaymentSystemService paymentSystemService;
-    private final BankCardTypeService bankCardTypeService;
+    private final BankAccountService bankAccountService;
 
     @Autowired
-    public BankCardRestController(BankAccountService bankAccountService,
-                                  BankCardService bankCardService,
-                                  PaymentSystemService paymentSystemService,
-                                  BankCardTypeService bankCardTypeService) {
-        this.bankAccountService = bankAccountService;
+    public BankCardRestController(BankCardService bankCardService, BankAccountService bankAccountService) {
         this.bankCardService = bankCardService;
-        this.paymentSystemService = paymentSystemService;
-        this.bankCardTypeService = bankCardTypeService;
+        this.bankAccountService = bankAccountService;
     }
 
     @PostMapping("")
     public BankCardDTO addBankCard(@Valid @RequestBody BankCardForAddDTO bankCardForAddDTO){
 
-        BankAccount bankAccount = bankAccountService.findById(bankCardForAddDTO.getBankAccountIdDTO().getId());
-        PaymentSystem paymentSystem = paymentSystemService.findById(bankCardForAddDTO.getPaymentSystemIdDTO().getId());
-        BankCardType bankCardType = bankCardTypeService.findById(bankCardForAddDTO.getBankCardTypeIdDTO().getId());
-
-        BankCard bankCard = bankCardService.addBankCard(bankAccount, paymentSystem, bankCardType);
+        BankCard bankCard = bankCardService.addBankCard(bankCardForAddDTO);
 
         return BankCardDTO.fromBankCard(bankCard);
 

@@ -1,6 +1,10 @@
 package com.example.project.bank.api.service.impl;
 
 import com.example.project.bank.api.dao.BankCardDAO;
+import com.example.project.bank.api.dto.BankAccountIdDTO;
+import com.example.project.bank.api.dto.BankCardForAddDTO;
+import com.example.project.bank.api.dto.BankCardTypeIdDTO;
+import com.example.project.bank.api.dto.PaymentSystemIdDTO;
 import com.example.project.bank.api.entity.BankAccount;
 import com.example.project.bank.api.entity.BankCard;
 import com.example.project.bank.api.entity.BankCardType;
@@ -24,13 +28,11 @@ class BankCardServiceImplTest {
     @MockBean
     private BankCardDAO bankCardDAO;
 
-    private static BankAccount bankAccount = new BankAccount();
-    private static PaymentSystem paymentSystem = new PaymentSystem();
-    private static BankCardType bankCardType = new BankCardType();
+    private static BankCardForAddDTO bankCardForAddDTO = new BankCardForAddDTO(new BankAccountIdDTO(1), new PaymentSystemIdDTO(1), new BankCardTypeIdDTO(1));
 
     @Test
     void addBankCard() {
-        BankCard bankCard = bankCardServiceImpl.addBankCard(bankAccount, paymentSystem, bankCardType);
+        BankCard bankCard = bankCardServiceImpl.addBankCard(bankCardForAddDTO);
 
         verify(bankCardDAO, Mockito.times(1)).save(any(BankCard.class));
         verify(bankCardDAO, Mockito.atLeast(1)).findByNumber(any(String.class));

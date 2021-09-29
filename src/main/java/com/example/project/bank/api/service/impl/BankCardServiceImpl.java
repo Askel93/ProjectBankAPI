@@ -1,12 +1,16 @@
 package com.example.project.bank.api.service.impl;
 
+import com.example.project.bank.api.dto.BankCardForAddDTO;
 import com.example.project.bank.api.entity.BankCardType;
 import com.example.project.bank.api.exception.BankCardGenerateException;
+import com.example.project.bank.api.service.BankAccountService;
 import com.example.project.bank.api.service.BankCardService;
 import com.example.project.bank.api.dao.BankCardDAO;
 import com.example.project.bank.api.entity.BankAccount;
 import com.example.project.bank.api.entity.BankCard;
 import com.example.project.bank.api.entity.PaymentSystem;
+import com.example.project.bank.api.service.BankCardTypeService;
+import com.example.project.bank.api.service.PaymentSystemService;
 import com.example.project.bank.api.service.util.BankCardCVVGenerator;
 import com.example.project.bank.api.service.util.BankCardDateGenerator;
 import com.example.project.bank.api.service.util.BankCardNumberGenerator;
@@ -21,9 +25,16 @@ public class BankCardServiceImpl implements BankCardService {
 
     private BankCardDAO bankCardDAO;
 
+    private final BankAccountService bankAccountService;
+    private final PaymentSystemService paymentSystemService;
+    private final BankCardTypeService bankCardTypeService;
+
     @Autowired
-    public BankCardServiceImpl(BankCardDAO bankCardDAO) {
+    public BankCardServiceImpl(BankCardDAO bankCardDAO, BankAccountService bankAccountService, PaymentSystemService paymentSystemService, BankCardTypeService bankCardTypeService) {
         this.bankCardDAO = bankCardDAO;
+        this.bankAccountService = bankAccountService;
+        this.paymentSystemService = paymentSystemService;
+        this.bankCardTypeService = bankCardTypeService;
     }
 
     private String getUniqueCardNumber(String startString){
@@ -51,7 +62,11 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Override
-    public BankCard addBankCard(BankAccount bankAccount, PaymentSystem paymentSystem, BankCardType bankCardType) {
+    public BankCard addBankCard(BankCardForAddDTO bankCardForAddDTO) {
+
+        BankAccount bankAccount = bankAccountService.findById(bankCardForAddDTO.getBankAccountIdDTO().getId());
+        PaymentSystem paymentSystem = paymentSystemService.findById(bankCardForAddDTO.getPaymentSystemIdDTO().getId());
+        BankCardType bankCardType = bankCardTypeService.findById(bankCardForAddDTO.getBankCardTypeIdDTO().getId());
 
         String startString = getStartSymbolsOfBankCard(paymentSystem, bankCardType);
 

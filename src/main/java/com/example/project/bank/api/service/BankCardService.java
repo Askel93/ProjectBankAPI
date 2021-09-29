@@ -1,5 +1,6 @@
 package com.example.project.bank.api.service;
 
+import com.example.project.bank.api.dto.BankCardForAddDTO;
 import com.example.project.bank.api.entity.BankAccount;
 import com.example.project.bank.api.entity.BankCard;
 import com.example.project.bank.api.entity.BankCardType;
@@ -9,5 +10,5 @@ import java.util.List;
 
 public interface BankCardService {
     List<BankCard> findByBankAccountId(int bankAccountId);
-    BankCard addBankCard(BankAccount bankAccount, PaymentSystem paymentSystem, BankCardType bankCardType);
+    BankCard addBankCard(BankCardForAddDTO bankCardForAddDTO);
 }
