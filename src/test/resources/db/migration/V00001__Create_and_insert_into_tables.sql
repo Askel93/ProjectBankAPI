@@ -92,8 +92,8 @@ CREATE TABLE payment_systems(
                                 id INT auto_increment PRIMARY KEY,
                                 version BIGINT,
                                 name VARCHAR(100),
-                                payment_system_code VARCHAR(10),
-                                bank_code VARCHAR(10)
+                                payment_system_code VARCHAR(10) NOT NULL,
+                                bank_code VARCHAR(10) NOT NULL
 );
 INSERT INTO payment_systems(version, name, payment_system_code, bank_code)
 VALUES
@@ -105,7 +105,7 @@ CREATE TABLE bank_card_types(
                                 id INT AUTO_INCREMENT PRIMARY KEY,
                                 version BIGINT,
                                 name VARCHAR(100),
-                                bank_card_type_code VARCHAR(10) UNIQUE
+                                bank_card_type_code VARCHAR(10) UNIQUE NOT NULL
 );
 INSERT INTO bank_card_types(version, name, bank_card_type_code)
 values
