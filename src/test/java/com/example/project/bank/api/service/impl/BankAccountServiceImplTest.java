@@ -80,15 +80,16 @@ class BankAccountServiceImplTest {
         then(bankAccountDAO).should(times(1)).findById(bankAccountId);
     }
 
+    @Test
     void findBankCardsByBankAccountIdSuccess(){
 
         List<BankCard> bankCardList = bankAccountService.findBankCardsByBankAccountId(bankAccountId);
-
+        
         assertNotNull(bankCardList);
-        assertTrue(bankCardList.size() > 0);
 
     }
 
+    @Test
     void findBankCardsByBankAccountIdEntityNotFound(){
 
         given(bankAccountDAO.findById(bankAccountId)).willReturn(null);
