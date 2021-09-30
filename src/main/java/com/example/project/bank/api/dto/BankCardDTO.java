@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BankCardDTO {
-    private int id;
+    private Integer id;
     private String number;
     private String paymentSystemName;
     private String bankCardTypeName;
