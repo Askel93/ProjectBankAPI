@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,6 +56,15 @@ class BankAccountServiceImplTest {
     }
 
     @Test
+    void addMoneyTimeout() {
+
+        double sum = 11.11;
+
+        assertTimeout(Duration.ofMillis(300),() -> bankAccountService.addMoney(bankAccountId,sum));
+
+    }
+
+    @Test
     void findByIdSuccess() {
 
         BankAccount bankAccountTest = new BankAccount(bankAccountId,"11111222223333344444","EUR", 1000);
@@ -67,6 +77,13 @@ class BankAccountServiceImplTest {
         assertEquals(bankAccount,bankAccountTest);
 
         then(bankAccountDAO).should(times(1)).findById(bankAccountId);
+
+    }
+
+    @Test
+    void findByIdTimeout() {
+
+        assertTimeout(Duration.ofMillis(200),() -> bankAccountService.findById(1));
 
     }
 

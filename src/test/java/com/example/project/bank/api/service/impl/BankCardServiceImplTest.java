@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -109,10 +110,33 @@ class BankCardServiceImplTest {
     }
 
     @Test
-    void findByBankAccountId(){
+    void addBankCardTimeout() {
+
+        assertTimeout(Duration.ofMillis(400),() -> bankCardServiceImpl.addBankCard(bankCardForAddDTO));
+
+    }
+
+    @Test
+    void findByBankAccountIdSuccess(){
         List<BankCard> bankCard = bankCardServiceImpl.findByBankAccountId(1);
 
         verify(bankCardDAO, Mockito.times(1)).findByBankAccountId(1);
+    }
+
+    @Test
+    void findByBankAccountIdException(){
+
+        when(bankCardDAO.findByBankAccountId(1)).thenThrow(new EntityNotFoundException("test",1));
+
+        assertThrows(EntityNotFoundException.class, () -> bankCardServiceImpl.findByBankAccountId(1));
+
+    }
+
+    @Test
+    void findByBankAccountIdTimeout() {
+
+        assertTimeout(Duration.ofMillis(300),() -> bankCardServiceImpl.findByBankAccountId(1));
+
     }
 
 }
