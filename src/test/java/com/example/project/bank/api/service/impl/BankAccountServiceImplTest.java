@@ -84,7 +84,7 @@ class BankAccountServiceImplTest {
     void findBankCardsByBankAccountIdSuccess(){
 
         List<BankCard> bankCardList = bankAccountService.findBankCardsByBankAccountId(bankAccountId);
-        
+
         assertNotNull(bankCardList);
 
     }

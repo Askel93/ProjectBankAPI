@@ -1,8 +1,13 @@
 package com.example.project.bank.api.service.util;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.junit.Assert.assertTrue;
 
 class BankCardNumberGeneratorTest {
 
@@ -20,6 +25,19 @@ class BankCardNumberGeneratorTest {
 
         assertThat(cardNumber, matchesPattern("^"+ startString +"\\d{" + (BankCardNumberGenerator.BANK_CARD_LENGTH - startString.length()) + "}$"));
     }
+
+    @Test
+    void generatedCardNumberShouldReturnDifferentValue() {
+
+        Set<String> cardNumbers = new HashSet<>();
+        for (int i = 0; i < 100; i++) {
+            cardNumbers.add(BankCardNumberGenerator.generateCardNumber(""));
+        }
+
+        assertTrue(cardNumbers.size() > 1);
+    }
+
+
 
 
 }
