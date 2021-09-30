@@ -32,6 +32,14 @@ class BankCardRestControllerTest {
     private final String urlAddBankCard = "/api/bank-cards";
     private final String contentTypeJson = "application/json";
 
+    private final BankAccountIdDTO validBankAccountIdDTO = new BankAccountIdDTO(1);
+    private final PaymentSystemIdDTO validPaymentSystemDTO = new PaymentSystemIdDTO(1);
+    private final BankCardTypeIdDTO validBankCardTypeIdDTO = new BankCardTypeIdDTO(1);
+
+    private final BankAccountIdDTO notFoundBankAccountIdDTO = new BankAccountIdDTO(-1);
+    private final PaymentSystemIdDTO notFoundPaymentSystemDTO = new PaymentSystemIdDTO(-1);
+    private final BankCardTypeIdDTO notFoundBankCardTypeIdDTO = new BankCardTypeIdDTO(-1);
+
     @Test
     public void controllerInitialized() {
         assertNotNull(restController);
@@ -40,10 +48,8 @@ class BankCardRestControllerTest {
     @Test
     void getByBankAccountIdIsOk() throws Exception {
 
-        BankAccountIdDTO dto = new BankAccountIdDTO(1);
-
         MvcResult result = this.mockMvc.perform(get(urlGetByAccountId).
-                        content(toJson(dto)).
+                        content(toJson(validBankAccountIdDTO)).
                         contentType(contentTypeJson).
                         accept(contentTypeJson))
                 .andExpect(status().isOk())
@@ -58,10 +64,9 @@ class BankCardRestControllerTest {
 
     @Test
     public void getByBankAccountIdIsNotFound() throws Exception {
-        BankAccountIdDTO dto = new BankAccountIdDTO(-9);
 
         MvcResult result = this.mockMvc.perform(get(urlGetByAccountId).
-                        content(toJson(dto)).
+                        content(toJson(notFoundBankAccountIdDTO)).
                         contentType(contentTypeJson).
                         accept(contentTypeJson))
                 .andExpect(status().isNotFound())
@@ -96,7 +101,8 @@ class BankCardRestControllerTest {
     @Test
     void addBankCardIsOk() throws Exception{
 
-        BankCardForAddDTO dto = new BankCardForAddDTO(new BankAccountIdDTO(1), new PaymentSystemIdDTO(1), new BankCardTypeIdDTO(1));
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(validBankAccountIdDTO, validPaymentSystemDTO, validBankCardTypeIdDTO);
 
         MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
                         .content(toJson(dto))
@@ -116,9 +122,10 @@ class BankCardRestControllerTest {
     }
 
     @Test
-    void addMoneyIsNotFound() throws Exception{
+    void addBankCardIsNotFoundBankAccount() throws Exception{
 
-        BankCardForAddDTO dto = new BankCardForAddDTO(new BankAccountIdDTO(-1), new PaymentSystemIdDTO(1), new BankCardTypeIdDTO(1));
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(notFoundBankAccountIdDTO, validPaymentSystemDTO, validBankCardTypeIdDTO);
 
         MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
                         .content(toJson(dto))
@@ -136,7 +143,49 @@ class BankCardRestControllerTest {
     }
 
     @Test
-    void addMoneyIsBadRequest() throws Exception{
+    void addBankCardIsNotFoundPaymentSystem() throws Exception{
+
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(validBankAccountIdDTO, notFoundPaymentSystemDTO, validBankCardTypeIdDTO);
+
+        MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
+                        .content(toJson(dto))
+                        .contentType(contentTypeJson)
+                        .accept(contentTypeJson))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(contentTypeJson))
+                .andReturn();
+
+        ErrorDTO responseDTO = (ErrorDTO) convertJSONStringToObject(
+                result.getResponse().getContentAsString(), ErrorDTO.class);
+
+        assertEquals(responseDTO.getErrorCode(),1);
+        assertNotNull(responseDTO.getErrorMessage());
+    }
+
+    @Test
+    void addBankCardIsNotFoundBankCardType() throws Exception{
+
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(validBankAccountIdDTO, validPaymentSystemDTO, notFoundBankCardTypeIdDTO);
+
+        MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
+                        .content(toJson(dto))
+                        .contentType(contentTypeJson)
+                        .accept(contentTypeJson))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(contentTypeJson))
+                .andReturn();
+
+        ErrorDTO responseDTO = (ErrorDTO) convertJSONStringToObject(
+                result.getResponse().getContentAsString(), ErrorDTO.class);
+
+        assertEquals(responseDTO.getErrorCode(),1);
+        assertNotNull(responseDTO.getErrorMessage());
+    }
+
+    @Test
+    void addBankCardIsBadRequest() throws Exception{
 
         MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
                         .content("{sadoh34ks}")
@@ -154,9 +203,10 @@ class BankCardRestControllerTest {
     }
 
     @Test
-    void addMoneyIsBadRequestNegativeSum() throws Exception{
+    void addBankCardIsBadRequestInvalidPaymentSystem() throws Exception{
 
-        BankCardForAddDTO dto = new BankCardForAddDTO(new BankAccountIdDTO(1), null, new BankCardTypeIdDTO(1));
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(validBankAccountIdDTO, null, validBankCardTypeIdDTO);
 
         MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
                         .content(toJson(dto))
@@ -174,9 +224,31 @@ class BankCardRestControllerTest {
     }
 
     @Test
-    void addMoneyIsBadRequestTooManyFraction() throws Exception{
+    void addBankCardIsBadRequestInvalidBankAccount() throws Exception{
 
-        BankCardForAddDTO dto = new BankCardForAddDTO(null, new PaymentSystemIdDTO(1), new BankCardTypeIdDTO(1));
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(null, validPaymentSystemDTO, validBankCardTypeIdDTO);
+
+        MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
+                        .content(toJson(dto))
+                        .contentType(contentTypeJson)
+                        .accept(contentTypeJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(contentTypeJson))
+                .andReturn();
+
+        ErrorDTO responseDTO = (ErrorDTO) convertJSONStringToObject(
+                result.getResponse().getContentAsString(), ErrorDTO.class);
+
+        assertEquals(responseDTO.getErrorCode(),6);
+        assertNotNull(responseDTO.getErrorMessage());
+    }
+
+    @Test
+    void addBankCardIsBadRequestInvalidBankCardType() throws Exception{
+
+        BankCardForAddDTO dto =
+                new BankCardForAddDTO(validBankAccountIdDTO, validPaymentSystemDTO, null);
 
         MvcResult result = this.mockMvc.perform(post(urlAddBankCard)
                         .content(toJson(dto))
